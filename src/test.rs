@@ -161,3 +161,36 @@ b
     let map = DMM::DMM::from_parser(parse);
     // println!("{:#?}", map);
 }
+
+#[test]
+fn parse_file_gpt_dmm() {
+    let map = include_str!("dmm_tests/gpt.dmm");
+
+    let parse = DMMParser::parse(Rule::map, map)
+        .expect("Failed parse")
+        .next()
+        .unwrap();
+    let map = DMM::DMM::from_parser(parse);
+}
+
+#[test]
+fn parse_file_tether_dmm() {
+    let map = include_str!("dmm_tests/tether.dmm");
+
+    let parse = DMMParser::parse(Rule::map, map)
+        .expect("Failed parse")
+        .next()
+        .unwrap();
+    let map = DMM::DMM::from_parser(parse);
+}
+
+#[test]
+fn parse_file_MetaStation_dmm() {
+    let map = include_str!("dmm_tests/MetaStation.dmm");
+
+    let parse = DMMParser::parse(Rule::map, map)
+        .expect("Failed parse")
+        .next()
+        .unwrap();
+    let map = DMM::DMM::from_parser(parse);
+}

@@ -12,9 +12,9 @@ use pest::iterators::Pair;
 use pest::iterators::Pairs;
 use pest::Parser;
 
-mod Coords;
-mod DMM;
-mod Prefab;
+pub mod Coords;
+pub mod DMM;
+pub mod Prefab;
 
 // Force cargo to rebuild
 const _GRAMMAR: &'static str = include_str!("prefab.pest");

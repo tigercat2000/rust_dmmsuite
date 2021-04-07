@@ -20,6 +20,7 @@ prefab = { key ~ "=" ~ paths }
 prefabs = { prefab ~ (prefab)* ~ (&coordblock) }
 
 // Entry
-map = { SOI ~ prefabs ~ coordinates ~ EOI }
+comment = _{ "//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE" }
+map = { SOI ~ comment? ~ prefabs ~ coordinates ~ EOI }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
