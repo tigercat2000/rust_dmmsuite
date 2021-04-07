@@ -1,0 +1,25 @@
+valid_path_char = _{ ASCII_ALPHANUMERIC | "_" | "/" }
+valid_initialize_char = _{ '!'..'z' | "|" | "~" }
+initializer = { valid_initialize_char+ }
+
+path = { valid_path_char+ ~ ("{" ~ initializer ~ (";" ~ initializer)* ~ "}")? }
+paths = { "(" ~ path ~ ("," ~ path)* ~ ")" }
+
+id = { ASCII_ALPHANUMERIC+ }
+key = _{ "\"" ~ id ~ "\"" }
+
+coord = { ASCII_DIGIT+ }
+offset = {"(" ~ coord ~ "," ~ coord ~ "," ~ coord ~ ")"}
+
+mapbody = _{ ASCII_ALPHANUMERIC+ }
+mapblock = { mapbody+ }
+coordblock = { offset ~ "=" ~ "{\"" ~ mapblock ~ "\"}" }
+coordinates = { coordblock+ }
+
+prefab = { key ~ "=" ~ paths }
+prefabs = { prefab ~ (prefab)* ~ (&coordblock) }
+
+// Entry
+map = { SOI ~ prefabs ~ coordinates ~ EOI }
+
+WHITESPACE = _{ " " | "\t" | NEWLINE }
