@@ -12,184 +12,16 @@ use pest::iterators::Pair;
 use pest::iterators::Pairs;
 use pest::Parser;
 
+mod Coords;
+mod DMM;
+mod Prefab;
+
 // Force cargo to rebuild
 const _GRAMMAR: &'static str = include_str!("prefab.pest");
 
 #[derive(Parser)]
 #[grammar = "prefab.pest"]
 pub struct DMMParser;
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct DMM {
-    pub prefabs: Vec<Prefab>,
-    pub coordinates: Vec<Coords>,
-}
-
-impl DMM {
-    pub fn from_parser(map: Pair<Rule>) -> Self {
-        assert_eq!(map.as_rule(), Rule::map);
-
-        let sections = map.into_inner();
-        let mut prefabs = Vec::new();
-        let mut coordinates = Vec::new();
-        let mut keysize = 1;
-        for section in sections {
-            match section.as_rule() {
-                Rule::prefabs => {
-                    prefabs = Prefab::from_parser_array(section);
-                    keysize = prefabs.last().unwrap().key.len();
-                }
-                Rule::coordinates => {
-                    coordinates = Coords::from_parser_array(section, keysize);
-                }
-                Rule::EOI => break,
-                _ => unreachable!(),
-            }
-        }
-
-        DMM {
-            prefabs,
-            coordinates,
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct Coords {
-    pub offset: (u32, u32, u32),
-    pub keymap: Vec<String>,
-}
-
-impl Coords {
-    pub fn from_parser_array(array: Pair<Rule>, keysize: usize) -> Vec<Self> {
-        assert_eq!(array.as_rule(), Rule::coordinates);
-
-        let coordblocks = array.into_inner();
-
-        let mut coordinates = Vec::new();
-        for coordblock in coordblocks {
-            assert_eq!(coordblock.as_rule(), Rule::coordblock);
-            coordinates.push(Coords::from_parser(coordblock, keysize));
-        }
-
-        coordinates
-    }
-
-    pub fn from_parser(coordblock: Pair<Rule>, keysize: usize) -> Self {
-        assert_eq!(coordblock.as_rule(), Rule::coordblock);
-
-        let mut sections = coordblock.into_inner();
-        let offset = sections.next().unwrap();
-        assert_eq!(offset.as_rule(), Rule::offset);
-        let mut offsets = offset.into_inner();
-
-        let x = offsets.next().unwrap();
-        assert_eq!(x.as_rule(), Rule::coord);
-        let x: u32 = x.as_str().parse().unwrap();
-
-        let y = offsets.next().unwrap();
-        assert_eq!(y.as_rule(), Rule::coord);
-        let y: u32 = y.as_str().parse().unwrap();
-
-        let z = offsets.next().unwrap();
-        assert_eq!(z.as_rule(), Rule::coord);
-        let z: u32 = z.as_str().parse().unwrap();
-
-        let mapblock = sections.next().unwrap();
-        assert_eq!(mapblock.as_rule(), Rule::mapblock);
-
-        let map_to_parse = mapblock
-            .as_str()
-            .replace("\t", "")
-            .replace(" ", "")
-            .replace("\n", "");
-
-        Coords {
-            offset: (x, y, z),
-            keymap: Self::parse_map(&map_to_parse, keysize),
-        }
-    }
-
-    pub fn parse_map(map: &str, keysize: usize) -> Vec<String> {
-        let mut iter = map.chars().peekable();
-
-        let mut vec = Vec::new();
-        while iter.peek().is_some() {
-            vec.push(iter.by_ref().take(keysize).collect())
-        }
-
-        vec
-    }
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct Prefab {
-    pub key: String,
-    pub path_initializers: Vec<String>,
-}
-
-impl Prefab {
-    pub fn build() -> Self {
-        Self {
-            key: String::new(),
-            path_initializers: vec![],
-        }
-    }
-
-    #[cfg(test)]
-    pub fn test_build(key: &str, path_initializers: Vec<&str>) -> Self {
-        Self {
-            key: key.to_string(),
-            path_initializers: path_initializers
-                .into_iter()
-                .map(|x| x.to_string())
-                .collect(),
-        }
-    }
-
-    pub fn from_parser_array(array: Pair<Rule>) -> Vec<Self> {
-        assert_eq!(array.as_rule(), Rule::prefabs);
-
-        let mut ret_vec = Vec::new();
-
-        let prefabs = array.into_inner();
-        for prefab in prefabs {
-            assert_eq!(prefab.as_rule(), Rule::prefab);
-            ret_vec.push(Prefab::from_parser(prefab));
-        }
-
-        ret_vec
-    }
-
-    pub fn from_parser(prefab: Pair<Rule>) -> Self {
-        assert_eq!(prefab.as_rule(), Rule::prefab);
-
-        let mut sections = prefab.into_inner();
-        let id = sections.next().unwrap();
-        assert_eq!(id.as_rule(), Rule::id);
-        let paths = sections.next().unwrap();
-        assert_eq!(paths.as_rule(), Rule::paths);
-
-        let mut new_self = Self {
-            key: id.as_str().to_string(),
-            path_initializers: Vec::new(),
-        };
-
-        new_self.take_paths(paths);
-
-        new_self
-    }
-
-    pub fn take_paths(&mut self, pair: Pair<Rule>) {
-        assert_eq!(pair.as_rule(), Rule::paths);
-        let paths = pair.into_inner();
-
-        for path in paths {
-            assert_eq!(path.as_rule(), Rule::path);
-            self.path_initializers.push(path.as_str().to_string());
-        }
-    }
-}
 
 #[cfg(test)]
 mod test {
@@ -205,7 +37,7 @@ mod test {
             .next()
             .unwrap();
 
-        let mut our_prefab = Prefab::build();
+        let mut our_prefab = Prefab::Prefab::build();
 
         for pair in prefab.into_inner() {
             match pair.as_rule() {
@@ -218,7 +50,7 @@ mod test {
 
         assert_eq!(
             our_prefab,
-            Prefab::test_build("aa", vec!["/turf/icon/white", "/area/debug"])
+            Prefab::Prefab::test_build("aa", vec!["/turf/icon/white", "/area/debug"])
         )
     }
 
@@ -230,7 +62,7 @@ mod test {
             .next()
             .unwrap();
 
-        let mut our_prefab = Prefab::build();
+        let mut our_prefab = Prefab::Prefab::build();
         for pair in prefab.into_inner() {
             match pair.as_rule() {
                 Rule::id => our_prefab.key = pair.as_str().to_string(),
@@ -241,7 +73,7 @@ mod test {
         }
         assert_eq!(
             our_prefab,
-            Prefab::test_build(
+            Prefab::Prefab::test_build(
                 "al",
                 vec![
                     r#"/turf/icon/white/green/corner{tag = "icon-whitegreencorner (EAST)"; icon_state = "whitegreencorner"; dir = 4}"#,
@@ -264,7 +96,7 @@ mod test {
             .expect("Parsing failed")
             .next()
             .unwrap();
-        let mut our_prefab = Prefab::build();
+        let mut our_prefab = Prefab::Prefab::build();
         for pair in prefab.into_inner() {
             match pair.as_rule() {
                 Rule::id => our_prefab.key = pair.as_str().to_string(),
@@ -275,7 +107,7 @@ mod test {
         }
         assert_eq!(
             our_prefab,
-            Prefab::test_build(
+            Prefab::Prefab::test_build(
                 "aab",
                 vec![
                     "/obj/structure/sign/warning/bomb_range{\n        name = \"\\improper MINING AREA - WATCH FOR BLASTING\"\n    }",
@@ -317,7 +149,7 @@ mod test {
             .next()
             .unwrap();
 
-        let map = DMM::from_parser(parse);
+        let map = DMM::DMM::from_parser(parse);
         // println!("{:#?}", map);
     }
 
@@ -353,7 +185,7 @@ mod test {
             .next()
             .unwrap();
 
-        let map = DMM::from_parser(parse);
+        let map = DMM::DMM::from_parser(parse);
         // println!("{:#?}", map);
     }
 }
