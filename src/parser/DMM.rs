@@ -1,4 +1,5 @@
 use pest::iterators::Pair;
+use pest::Parser;
 
 // Force cargo to rebuild if grammar changes
 const _GRAMMAR: &'static str = include_str!("DMM.pest");
@@ -79,5 +80,13 @@ impl DMM {
         let prefabs: Vec<&PrefabInfo> = prefabs.values().collect();
 
         Ok(serde_json::to_string(&prefabs)?)
+    }
+
+    pub fn read_map(map: &str) -> Self {
+        let parse = DMMParser::parse(Rule::map, map)
+            .expect("Failed parse")
+            .next()
+            .unwrap();
+        Self::from_parser(parse)
     }
 }

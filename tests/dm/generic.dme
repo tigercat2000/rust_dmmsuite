@@ -1,0 +1,13 @@
+#include "common.dm"
+
+/test/proc/test_dmmsuite()
+	var/success = dmmsuite_test() == "Hello from DMMSuite!"
+	if(!success)
+		CRASH("DMMSuite Test Failed (glob: [GLOB.dmmsuite_initialized])")
+	else
+		world.log << "SUCCESS"
+
+/test/proc/test_load()
+	world.log << "maxz before: [world.maxz]"
+	var/ret = dmmsuite_load_map(1, 1, 1, "tests/dm/maps/gpt.dmm")
+	world.log << "ret [ret], maxz after: [world.maxz]"

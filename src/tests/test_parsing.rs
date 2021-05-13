@@ -2,6 +2,18 @@ use crate::{DMMParser, Prefab, Rule, DMM};
 use pest::parses_to;
 use pest::Parser;
 
+impl Prefab {
+    pub fn test_build(key: &str, path_initializers: Vec<&str>) -> Self {
+        Self {
+            key: key.to_string(),
+            path_initializers: path_initializers
+                .into_iter()
+                .map(|x| x.to_string())
+                .collect(),
+        }
+    }
+}
+
 #[test]
 fn parse_basic_prefab() {
     let prefab = r#""aa" = (/turf/icon/white,/area/debug)"#;

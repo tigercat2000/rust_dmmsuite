@@ -15,5 +15,7 @@ pub use CoordsMod::Coords;
 pub use DMMMod::{DMMParser, Rule, DMM};
 pub use PrefabMod::Prefab;
 
+pub mod byond;
+
 #[cfg(test)]
 mod tests;

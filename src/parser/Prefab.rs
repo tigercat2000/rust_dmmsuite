@@ -15,17 +15,6 @@ impl Prefab {
         }
     }
 
-    #[cfg(test)]
-    pub fn test_build(key: &str, path_initializers: Vec<&str>) -> Self {
-        Self {
-            key: key.to_string(),
-            path_initializers: path_initializers
-                .into_iter()
-                .map(|x| x.to_string())
-                .collect(),
-        }
-    }
-
     pub fn from_parser_array(array: Pair<Rule>) -> Vec<Self> {
         #[cfg(test)]
         assert_eq!(array.as_rule(), Rule::prefabs);
