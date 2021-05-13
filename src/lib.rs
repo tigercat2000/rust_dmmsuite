@@ -8,20 +8,12 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
-use pest::iterators::Pair;
-use pest::iterators::Pairs;
-use pest::Parser;
+pub mod parser;
 
-pub mod Coords;
-pub mod DMM;
-pub mod Prefab;
-
-// Force cargo to rebuild
-const _GRAMMAR: &'static str = include_str!("prefab.pest");
-
-#[derive(Parser)]
-#[grammar = "prefab.pest"]
-pub struct DMMParser;
+pub use parser::{Coords as CoordsMod, Prefab as PrefabMod, DMM as DMMMod};
+pub use CoordsMod::Coords;
+pub use DMMMod::{DMMParser, Rule, DMM};
+pub use PrefabMod::Prefab;
 
 #[cfg(test)]
-mod test;
+mod tests;
