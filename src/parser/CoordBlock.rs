@@ -3,18 +3,18 @@ use pest::iterators::Pair;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Coords {
+pub struct CoordBlock {
     pub offset: (u32, u32, u32),
     pub keymap: Vec<String>,
 }
 
-impl Coords {
+impl CoordBlock {
     pub fn from_parser_array(array: Pair<Rule>, keysize: usize) -> Vec<Self> {
         #[cfg(test)]
         assert_eq!(array.as_rule(), Rule::coordinates);
         array
             .into_inner()
-            .map(|coordblock| Coords::from_parser(coordblock, keysize))
+            .map(|coordblock| CoordBlock::from_parser(coordblock, keysize))
             .collect()
     }
 
@@ -53,7 +53,7 @@ impl Coords {
             .replace(" ", "")
             .replace("\r", "");
 
-        Coords {
+        CoordBlock {
             offset: (x, y, z),
             keymap: Self::parse_map(&map_to_parse, keysize),
         }
@@ -93,5 +93,20 @@ impl Coords {
                 current_coords.0 += 1;
             }
         });
+    }
+
+    pub fn calculate_bounds(&self) -> (u32, u32, u32) {
+        let mut bounds = (0, 0, 0);
+
+        self.keymap.iter().for_each(|key| {
+            if key.ends_with("\n") {
+                bounds.1 += 1;
+                bounds.0 = self.offset.0;
+            } else {
+                bounds.0 += 1;
+            }
+        });
+
+        bounds
     }
 }

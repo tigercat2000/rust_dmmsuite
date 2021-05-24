@@ -1,4 +1,4 @@
-use crate::{DMMParser, Prefab, Rule, DMM};
+use crate::{Coord, DMMParser, Prefab, Rule, DMM};
 use pest::parses_to;
 use pest::Parser;
 
@@ -219,4 +219,49 @@ fn test_jsonize_dmm() {
     let map = DMM::from_parser(parse);
 
     map.to_json().expect("Failed to create JSON");
+}
+
+#[test]
+fn test_to_loadable() {
+    let dmm = r#""a" = (/turf,/area)
+"b" = (/turf,/area)
+
+(1,1,1) = {"
+a
+b
+a
+"}"#;
+    let map = DMM::read_map(dmm);
+    let loadable = map.to_loadable(1, 1, 1);
+
+    // There is two paths per key, and 3 defined turfs.
+    assert_eq!(loadable.len(), 6);
+
+    assert_eq!(loadable[0].0, Coord { x: 1, y: 1, z: 1 });
+    assert_eq!(loadable[5].0, Coord { x: 1, y: 3, z: 1 });
+}
+
+#[test]
+fn test_tgm_to_loadable() {
+    let dmm = r#""a" = (/turf,/area)
+"b" = (/turf,/area)
+
+(1,1,1) = {"
+a
+b
+a
+"}
+
+(2,1,1) = {"
+b
+"}"#;
+    let map = DMM::read_map(dmm);
+    let loadable = map.to_loadable(1, 1, 1);
+
+    // There is two paths per key, and 4 defined turfs.
+    assert_eq!(loadable.len(), 8);
+
+    assert_eq!(loadable[0].0, Coord { x: 1, y: 1, z: 1 });
+    assert_eq!(loadable[5].0, Coord { x: 1, y: 3, z: 1 });
+    assert_eq!(loadable[7].0, Coord { x: 2, y: 1, z: 1 });
 }

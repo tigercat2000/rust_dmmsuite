@@ -8,6 +8,23 @@
 		world.log << "SUCCESS"
 
 /test/proc/test_load()
-	world.log << "maxz before: [world.maxz]"
-	var/ret = dmmsuite_load_map(1, 1, 1, "tests/dm/maps/gpt.dmm")
-	world.log << "ret [ret], maxz after: [world.maxz]"
+	var/turf/T = locate(1,1,1)
+	ASSERT(isnull(T))
+
+	world.log << "BEFORE: maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
+	var/ret = dmmsuite_load_map(1, 1, 1, "tests/dm/maps/just_white.dmm")
+	world.log << "AFTER: Return [json_encode(ret)], maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
+
+	T = locate(1,1,1)
+	ASSERT(T.type == /turf/white)
+
+// BEGIN_INTERNALS
+// END_INTERNALS
+// BEGIN_FILE_DIR
+#define FILE_DIR .
+// END_FILE_DIR
+// BEGIN_PREFERENCES
+// END_PREFERENCES
+// BEGIN_INCLUDE
+#include "maps\defs.dm"
+// END_INCLUDE

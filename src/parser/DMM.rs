@@ -7,13 +7,14 @@ const _GRAMMAR: &'static str = include_str!("DMM.pest");
 #[grammar = "parser/DMM.pest"]
 pub struct DMMParser;
 
-use crate::parser::Coords::Coords;
+use crate::parser::Coord::Coord;
+use crate::parser::CoordBlock::CoordBlock;
 use crate::parser::Prefab::Prefab;
 use std::collections::HashMap;
 #[derive(Debug, PartialEq, Clone)]
 pub struct DMM {
     pub prefabs: Vec<Prefab>,
-    pub coordinates: Vec<Coords>,
+    pub coordinates: Vec<CoordBlock>,
 }
 
 impl DMM {
@@ -31,7 +32,7 @@ impl DMM {
                     keysize = prefabs.last().unwrap().key.len();
                 }
                 Rule::coordinates => {
-                    coordinates = Coords::from_parser_array(section, keysize);
+                    coordinates = CoordBlock::from_parser_array(section, keysize);
                 }
                 Rule::EOI => break,
                 _ => unreachable!(),
@@ -81,6 +82,47 @@ impl DMM {
 
         Ok(serde_json::to_string(&prefabs)?)
     }
+
+    pub fn to_loadable(&self, x: u32, y: u32, z: u32) -> Vec<(Coord, String)> {
+        let mut loadable = Vec::new();
+
+        let mut prefabs: HashMap<String, Vec<String>> = HashMap::new();
+
+        let _ = self.prefabs.iter().for_each(|prefab| {
+            prefabs.insert(prefab.key.clone(), prefab.path_initializers.clone());
+        });
+
+        self.coordinates.iter().for_each(|block| {
+            let mut offset_to_key_map = HashMap::new();
+            block.create_coord_to_key_map(&mut offset_to_key_map);
+            offset_to_key_map.iter().for_each(|(c, fab_key)| {
+                prefabs.get(fab_key).unwrap().iter().for_each(|path| {
+                    loadable.push((
+                        Coord {
+                            x: x + (c.0 - 1),
+                            y: y + (c.1 - 1),
+                            z: z + (c.2 - 1),
+                        },
+                        path.clone(),
+                    ));
+                });
+            });
+        });
+
+        loadable.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+
+        loadable
+    }
+
+    // pub fn calculate_bounds(&self, offx: u32, offy: u32, offz: u32) -> (u32, u32, u32) {
+    //     let (maxx, maxy, maxz) = (offx, offy, offz);
+
+    //     self.coordinates.iter().for_each(|block| {
+    //         let bounds = block.calculate_bounds();
+    //     });
+
+    //     (maxx, maxy, maxz)
+    // }
 
     pub fn read_map(map: &str) -> Self {
         let parse = DMMParser::parse(Rule::map, map)

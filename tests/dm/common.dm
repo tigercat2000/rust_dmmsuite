@@ -17,6 +17,6 @@
 	DMMSUITE_SHUTDOWN
 
 	if(world.system_type == MS_WINDOWS)
-		shell("taskkill /im dreamdaemon.exe")
-		sleep(10)
-	del(src)
+		shell("taskkill /f /im dreamdaemon.exe")
+	else
+		del(src)

@@ -132,7 +132,10 @@ fn check_log(log: String) {
 
 fn check_output(output: &Output) {
     dump(&output);
-    generic_check(&output);
+    if !cfg!(windows) {
+        // We have to nuke the shit out of the dream daemon process to get it to stop
+        generic_check(&output);
+    }
     runtime_check(&output.stderr);
 }
 

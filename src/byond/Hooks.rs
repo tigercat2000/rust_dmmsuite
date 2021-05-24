@@ -13,9 +13,9 @@ fn dmmsuite_test() {
 
 #[hook("/proc/dmmsuite_load_map")]
 fn load_map(x: Value, y: Value, z: Value, file: Value) {
-    let x: _ = x.as_number()?;
-    let y = y.as_number()?;
-    let z = z.as_number()?;
+    let x = x.as_number()? as u32;
+    let y = y.as_number()? as u32;
+    let z = z.as_number()? as u32;
     let file = file.as_string()?;
 
     // let proc = Proc::find("/proc/auxtools_stack_trace").unwrap();
@@ -23,15 +23,12 @@ fn load_map(x: Value, y: Value, z: Value, file: Value) {
     //     &Value::from_string(format!("cwd is {:?}", std::env::current_dir().unwrap())).unwrap(),
     // ]);
 
-    let path = match PathBuf::from(&file).canonicalize() {
-        Ok(path) => path,
-        Err(p) => return Err(runtime!(format!("Unable to find file {}", file))),
-    };
+    let path = PathBuf::from(&file)
+        .canonicalize()
+        .map_err(|_| runtime!("Unable to find file {}", file))?;
 
-    let file_contents = match std::fs::read_to_string(path) {
-        Ok(file) => file,
-        Err(p) => return Err(runtime!(format!("Unable to read file {}", file))),
-    };
+    let file_contents =
+        std::fs::read_to_string(path).map_err(|_| runtime!("Unable to read file {}", file))?;
 
     ReadMap::parse_and_load(x, y, z, &file_contents)?;
     Ok(Value::null())

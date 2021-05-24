@@ -19,3 +19,7 @@ GLOBAL_VAR_INIT(dmmsuite_initialized, FALSE)
 	CRASH("DMMSUITE NOT LOADED")
 
 /proc/dmmsuite_load_map(x, y, z, file)
+
+/proc/__dmmsuite_new_atom(textpath, x, y, z)
+	var/path = text2path(textpath)
+	new path(locate(x,y,z))
