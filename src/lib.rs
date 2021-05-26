@@ -18,7 +18,7 @@ pub use CoordsBlockMod::CoordBlock;
 pub use DMMMod::{DMMParser, Rule, DMM};
 pub use PrefabMod::Prefab;
 
-pub mod byond;
+// pub mod byond;
 
 #[cfg(test)]
 mod tests;

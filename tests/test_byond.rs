@@ -2,6 +2,7 @@ use std::path::Path;
 use std::process::{Command, Output, Stdio};
 
 #[test]
+#[ignore]
 fn generic_tests() {
     run_dm_tests("generic");
 }
