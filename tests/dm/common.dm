@@ -1,3 +1,4 @@
+#include "deps/dmbot.dm"
 #include "deps/etc.dm"
 #include "deps/globals.dm"
 #include "deps/controllers/globals.dm"
