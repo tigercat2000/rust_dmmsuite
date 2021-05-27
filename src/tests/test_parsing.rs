@@ -135,8 +135,8 @@ bbbbbbbbb
         .next()
         .unwrap();
 
-    let _ = DMM::from_parser(parse);
-    // println!("{:#?}", map);
+    let map = DMM::from_parser(parse);
+    println!("{:#?}", map);
 }
 
 #[test]
@@ -171,8 +171,8 @@ b
         .next()
         .unwrap();
 
-    let _ = DMM::from_parser(parse);
-    // println!("{:#?}", map);
+    let map = DMM::from_parser(parse);
+    println!("{:#?}", map);
 }
 
 #[test]
@@ -208,60 +208,47 @@ fn parse_file_MetaStation_dmm() {
     let _ = DMM::from_parser(parse);
 }
 
-#[test]
-fn test_jsonize_dmm() {
-    let map = include_str!("dmm_files/gpt.dmm");
+// #[test]
+// fn test_to_loadable() {
+//     let dmm = r#""a" = (/turf,/area)
+// "b" = (/turf,/area)
 
-    let parse = DMMParser::parse(Rule::map, map)
-        .expect("Failed parse")
-        .next()
-        .unwrap();
-    let map = DMM::from_parser(parse);
+// (1,1,1) = {"
+// a
+// b
+// a
+// "}"#;
+//     let map = DMM::read_map(dmm);
+//     let loadable = map.to_loadable(1, 1, 1);
 
-    map.to_json().expect("Failed to create JSON");
-}
+//     // There is two paths per key, and 3 defined turfs.
+//     assert_eq!(loadable.len(), 6);
 
-#[test]
-fn test_to_loadable() {
-    let dmm = r#""a" = (/turf,/area)
-"b" = (/turf,/area)
+//     assert_eq!(loadable[0].0, Coord(1, 1, 1));
+//     assert_eq!(loadable[5].0, Coord(1, 3, 1));
+// }
 
-(1,1,1) = {"
-a
-b
-a
-"}"#;
-    let map = DMM::read_map(dmm);
-    let loadable = map.to_loadable(1, 1, 1);
+// #[test]
+// fn test_tgm_to_loadable() {
+//     let dmm = r#""a" = (/turf,/area)
+// "b" = (/turf,/area)
 
-    // There is two paths per key, and 3 defined turfs.
-    assert_eq!(loadable.len(), 6);
+// (1,1,1) = {"
+// a
+// b
+// a
+// "}
 
-    assert_eq!(loadable[0].0, Coord { x: 1, y: 1, z: 1 });
-    assert_eq!(loadable[5].0, Coord { x: 1, y: 3, z: 1 });
-}
+// (2,1,1) = {"
+// b
+// "}"#;
+//     let map = DMM::read_map(dmm);
+//     let loadable = map.to_loadable(1, 1, 1);
 
-#[test]
-fn test_tgm_to_loadable() {
-    let dmm = r#""a" = (/turf,/area)
-"b" = (/turf,/area)
+//     // There is two paths per key, and 4 defined turfs.
+//     assert_eq!(loadable.len(), 8);
 
-(1,1,1) = {"
-a
-b
-a
-"}
-
-(2,1,1) = {"
-b
-"}"#;
-    let map = DMM::read_map(dmm);
-    let loadable = map.to_loadable(1, 1, 1);
-
-    // There is two paths per key, and 4 defined turfs.
-    assert_eq!(loadable.len(), 8);
-
-    assert_eq!(loadable[0].0, Coord { x: 1, y: 1, z: 1 });
-    assert_eq!(loadable[5].0, Coord { x: 1, y: 3, z: 1 });
-    assert_eq!(loadable[7].0, Coord { x: 2, y: 1, z: 1 });
-}
+//     assert_eq!(loadable[0].0, Coord(1, 1, 1));
+//     assert_eq!(loadable[5].0, Coord(1, 3, 1));
+//     assert_eq!(loadable[7].0, Coord(2, 1, 1));
+// }

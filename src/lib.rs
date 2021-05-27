@@ -10,11 +10,8 @@ extern crate pest_derive;
 
 pub mod parser;
 
-pub use parser::{
-    Coord as CoordMod, CoordBlock as CoordsBlockMod, Prefab as PrefabMod, DMM as DMMMod,
-};
+pub use parser::{Coord as CoordMod, Prefab as PrefabMod, DMM as DMMMod};
 pub use CoordMod::Coord;
-pub use CoordsBlockMod::CoordBlock;
 pub use DMMMod::{DMMParser, Rule, DMM};
 pub use PrefabMod::Prefab;
 

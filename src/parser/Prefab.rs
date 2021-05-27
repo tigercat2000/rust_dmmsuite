@@ -1,5 +1,6 @@
 use crate::parser::DMM::Rule;
 use pest::iterators::Pair;
+use std::collections::{BTreeMap, HashMap};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Prefab {
@@ -15,7 +16,7 @@ impl Prefab {
         }
     }
 
-    pub fn from_parser_array(array: Pair<Rule>) -> Vec<Self> {
+    pub fn from_parser_array(array: Pair<Rule>) -> HashMap<String, Self> {
         #[cfg(test)]
         assert_eq!(array.as_rule(), Rule::prefabs);
 
@@ -25,7 +26,7 @@ impl Prefab {
             .collect()
     }
 
-    pub fn from_parser(prefab: Pair<Rule>) -> Self {
+    pub fn from_parser(prefab: Pair<Rule>) -> (String, Self) {
         #[cfg(test)]
         assert_eq!(prefab.as_rule(), Rule::prefab);
 
@@ -44,7 +45,7 @@ impl Prefab {
 
         new_self.take_paths(paths);
 
-        new_self
+        (new_self.key.clone(), new_self)
     }
 
     pub fn take_paths(&mut self, pair: Pair<Rule>) {
