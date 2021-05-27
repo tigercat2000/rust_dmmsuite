@@ -1,4 +1,5 @@
 use super::*;
+use crate::Coord;
 use std::io::{self, Write};
 use std::path::PathBuf;
 
@@ -30,6 +31,6 @@ fn load_map(x: Value, y: Value, z: Value, file: Value) {
     let file_contents =
         std::fs::read_to_string(path).map_err(|_| runtime!("Unable to read file {}", file))?;
 
-    ReadMap::parse_and_load(x, y, z, &file_contents)?;
+    ReadMap::parse_and_load(Coord(x, y, z), &file_contents)?;
     Ok(Value::null())
 }

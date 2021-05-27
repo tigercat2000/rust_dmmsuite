@@ -15,7 +15,7 @@ use std::collections::{BTreeMap, HashMap};
 pub struct DMM {
     prefabs: HashMap<String, Prefab>,
     keysize: usize,
-    map: BTreeMap<Coord, *const Prefab>,
+    pub map: BTreeMap<Coord, *const Prefab>,
 }
 
 impl DMM {
@@ -44,6 +44,16 @@ impl DMM {
         }
 
         new_dmm
+    }
+
+    pub fn calculate_bounds(&self, offset: Coord) -> Coord {
+        let big_boy = self.map.iter().last().unwrap().0;
+
+        Coord(
+            big_boy.0 + (offset.0 - 1),
+            big_boy.1 + (offset.1 - 1),
+            big_boy.2 + (offset.2 - 1),
+        )
     }
 
     // Parses an array of coordblocks into our map.
