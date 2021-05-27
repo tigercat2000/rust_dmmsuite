@@ -17,6 +17,8 @@
 
 	T = locate(1,1,1)
 	ASSERT(T.type == /turf/white)
+	T = locate(2,1,1)
+	ASSERT(T.type == /turf/white)
 
 // BEGIN_INTERNALS
 // END_INTERNALS
