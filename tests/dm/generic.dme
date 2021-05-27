@@ -19,6 +19,28 @@
 	ASSERT(T.type == /turf/white)
 	T = locate(2,1,1)
 	ASSERT(T.type == /turf/white)
+	T = locate(1,2,1)
+	ASSERT(T.type == /turf/white)
+	T = locate(2,2,1)
+	ASSERT(T.type == /turf/white)
+
+/test/proc/test_offset()
+	var/turf/T = locate(1,1,1)
+	ASSERT(isnull(T))
+
+	world.log << "BEFORE: maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
+	var/ret = dmmsuite_load_map(2, 1, 1, "tests/dm/maps/just_white.dmm")
+	world.log << "AFTER: Return [json_encode(ret)], maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
+
+	T = locate(2,1,1)
+	ASSERT(T.type == /turf/white)
+	T = locate(3,1,1)
+	ASSERT(T.type == /turf/white)
+	T = locate(2,2,1)
+	ASSERT(T.type == /turf/white)
+	T = locate(3,2,1)
+	ASSERT(T.type == /turf/white)
+
 
 // BEGIN_INTERNALS
 // END_INTERNALS

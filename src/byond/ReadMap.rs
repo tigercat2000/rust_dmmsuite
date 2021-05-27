@@ -13,6 +13,9 @@ pub(crate) fn parse_and_load(offset: Coord, file_contents: &str) -> Result<(), R
     map.map.iter().for_each(|(c, p)| {
         // Safety: We know these pointers are valid because we own the thing they point to.
         let prefab: &Prefab = unsafe { &**p };
+
+        let c = *c + (offset - Coord(1, 1, 1));
+
         prefab.path_initializers.iter().for_each(|path| {
             new_atom.call(&[
                 &Value::from_string(path).unwrap(),

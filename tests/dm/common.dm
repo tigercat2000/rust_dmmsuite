@@ -15,6 +15,10 @@
 		log << "[func] [copytext("------------------------------------------------------------------------", length("[func]"))]"
 		call(new /test, func)()
 
+		world.maxx = 0
+		world.maxy = 0
+		world.maxz = 0
+
 	DMMSUITE_SHUTDOWN
 
 	if(world.system_type == MS_WINDOWS)
