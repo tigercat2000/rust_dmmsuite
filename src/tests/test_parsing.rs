@@ -135,8 +135,8 @@ bbbbbbbbb
         .next()
         .unwrap();
 
-    let map = DMM::from_parser(parse);
-    println!("{:#?}", map);
+    let _ = DMM::from_parser(parse);
+    // println!("{:#?}", map);
 }
 
 #[test]
@@ -171,8 +171,8 @@ b
         .next()
         .unwrap();
 
-    let map = DMM::from_parser(parse);
-    println!("{:#?}", map);
+    let _ = DMM::from_parser(parse);
+    // println!("{:#?}", map);
 }
 
 #[test]
