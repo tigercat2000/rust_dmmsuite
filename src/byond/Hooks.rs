@@ -13,10 +13,10 @@ fn dmmsuite_test() {
 }
 
 #[hook("/proc/dmmsuite_load_map")]
-fn load_map(x: Value, y: Value, z: Value, file: Value) {
-    let x = x.as_number()? as u32;
-    let y = y.as_number()? as u32;
-    let z = z.as_number()? as u32;
+fn load_map(file: Value, x_offset: Value, y_offset: Value, z_offset: Value) {
+    let x = x_offset.as_number()? as u32;
+    let y = y_offset.as_number()? as u32;
+    let z = z_offset.as_number()? as u32;
     let file = file.as_string()?;
 
     // let proc = Proc::find("/proc/auxtools_stack_trace").unwrap();

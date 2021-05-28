@@ -15,7 +15,7 @@
 	ASSERT(isnull(T))
 
 	world.log << "BEFORE: maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
-	var/ret = dmmsuite_load_map(1, 1, 1, "tests/dm/maps/just_white.dmm")
+	var/ret = dmmsuite_load_map("tests/dm/maps/just_white.dmm", 1, 1, 1)
 	world.log << "AFTER: Return [json_encode(ret)], maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
 
 	check_turf(locate(1,1,1), /turf/white)
@@ -30,7 +30,7 @@
 	ASSERT(isnull(T))
 
 	world.log << "BEFORE: maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
-	var/ret = dmmsuite_load_map(2, 1, 1, "tests/dm/maps/just_white.dmm")
+	var/ret = dmmsuite_load_map("tests/dm/maps/just_white.dmm", 2, 1, 1)
 	world.log << "AFTER: Return [json_encode(ret)], maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
 
 	check_turf(locate(1,1,1), /turf)

@@ -18,7 +18,7 @@ GLOBAL_VAR_INIT(dmmsuite_initialized, FALSE)
 /proc/dmmsuite_test()
 	CRASH("DMMSUITE NOT LOADED")
 
-/proc/dmmsuite_load_map(x, y, z, file)
+/proc/dmmsuite_load_map(file, x_offset, y_offset, z_offset)
 
 /proc/__dmmsuite_new_atom(textpath, x, y, z)
 	var/path = text2path(textpath)
