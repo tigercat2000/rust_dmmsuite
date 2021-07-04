@@ -25,6 +25,21 @@
 	check_turf(locate(2,2,1), /turf/black)
 	check_turf(locate(3,2,1), /turf/black)
 
+/test/proc/test_load_no_input()
+	var/turf/T = locate(1,1,1)
+	ASSERT(isnull(T))
+
+	world.log << "BEFORE: maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
+	var/ret = dmmsuite_load_map("tests/dm/maps/just_white.dmm")
+	world.log << "AFTER: Return [json_encode(ret)], maxx [world.maxx] maxy [world.maxy] maxz [world.maxz]"
+
+	check_turf(locate(1,1,1), /turf/white)
+	check_turf(locate(2,1,1), /turf/white)
+	check_turf(locate(3,1,1), /turf/black)
+	check_turf(locate(1,2,1), /turf/white)
+	check_turf(locate(2,2,1), /turf/black)
+	check_turf(locate(3,2,1), /turf/black)
+
 /test/proc/test_offset()
 	var/turf/T = locate(1,1,1)
 	ASSERT(isnull(T))

@@ -18,7 +18,15 @@ GLOBAL_VAR_INIT(dmmsuite_initialized, FALSE)
 /proc/dmmsuite_test()
 	CRASH("DMMSUITE NOT LOADED")
 
+
 /proc/dmmsuite_load_map(file, x_offset, y_offset, z_offset)
+
+// /// Shortcut function to parse a map and apply it to the world.
+// ///
+// /// - `file`: A .dmm file to load (Required).
+// /// - `x_offset`, `y_offset`, `z_offset`: Positions representign where to load the map (Optional).
+// /// - `x_lower`, `x_upper`, `y_lower`, `y_upper`: Coordinates (relative to the map) to crop to (Optional).
+// /proc/dmmsuite_load_map(file, x_offset, y_offset, z_offset, x_lower, x_upper, y_lower, y_upper)
 
 /proc/__dmmsuite_new_atom(textpath, x, y, z)
 	var/path = text2path(textpath)

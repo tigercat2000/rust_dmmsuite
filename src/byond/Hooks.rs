@@ -12,11 +12,18 @@ fn dmmsuite_test() {
     Value::from_string("Hello from DMMSuite!")
 }
 
+fn default_zlevel() -> f32 {
+    Value::world()
+        .get_number(byond_string!("maxz"))
+        .unwrap_or(1.0)
+        + 1.0
+}
+
 #[hook("/proc/dmmsuite_load_map")]
 fn load_map(file: Value, x_offset: Value, y_offset: Value, z_offset: Value) {
-    let x = x_offset.as_number()? as u32;
-    let y = y_offset.as_number()? as u32;
-    let z = z_offset.as_number()? as u32;
+    let x = x_offset.as_number().unwrap_or(1.0) as u32;
+    let y = y_offset.as_number().unwrap_or(1.0) as u32;
+    let z = z_offset.as_number().unwrap_or_else(|_| default_zlevel()) as u32;
     let file = file.as_string()?;
 
     // let proc = Proc::find("/proc/auxtools_stack_trace").unwrap();
