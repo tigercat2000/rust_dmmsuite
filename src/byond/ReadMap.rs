@@ -1,5 +1,5 @@
 use super::*;
-use crate::{Coord, Prefab, DMM};
+use crate::{Coord, PrefabList, DMM};
 
 pub(crate) fn parse_and_load(offset: Coord, file_contents: &str) -> Result<(), Runtime> {
     let map = DMM::read_map(file_contents);
@@ -12,11 +12,11 @@ pub(crate) fn parse_and_load(offset: Coord, file_contents: &str) -> Result<(), R
 
     map.map.iter().for_each(|(c, p)| {
         // Safety: We know these pointers are valid because we own the thing they point to.
-        let prefab: &Prefab = unsafe { &**p };
+        let prefab: &PrefabList = unsafe { &**p };
 
         let c = *c + (offset - Coord(1, 1, 1));
 
-        prefab.path_initializers.iter().for_each(|path| {
+        prefab.prefabs.iter().for_each(|path| {
             new_atom.call(&[
                 &Value::from_string(path).unwrap(),
                 &Value::from(c.0),

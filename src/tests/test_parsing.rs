@@ -1,12 +1,12 @@
-use crate::{Coord, DMMParser, Prefab, Rule, DMM};
+use crate::{Coord, DMMParser, PrefabList, Rule, DMM};
 use pest::parses_to;
 use pest::Parser;
 
-impl Prefab {
+impl PrefabList {
     pub fn test_build(key: &str, path_initializers: Vec<&str>) -> Self {
         Self {
             key: key.to_string(),
-            path_initializers: path_initializers
+            prefabs: path_initializers
                 .into_iter()
                 .map(|x| x.to_string())
                 .collect(),
@@ -23,7 +23,7 @@ fn parse_basic_prefab() {
         .next()
         .unwrap();
 
-    let mut our_prefab = Prefab::build();
+    let mut our_prefab = PrefabList::build();
 
     for pair in prefab.into_inner() {
         match pair.as_rule() {
@@ -36,7 +36,7 @@ fn parse_basic_prefab() {
 
     assert_eq!(
         our_prefab,
-        Prefab::test_build("aa", vec!["/turf/icon/white", "/area/debug"])
+        PrefabList::test_build("aa", vec!["/turf/icon/white", "/area/debug"])
     )
 }
 
@@ -48,7 +48,7 @@ fn parse_initialized_prefab() {
         .next()
         .unwrap();
 
-    let mut our_prefab = Prefab::build();
+    let mut our_prefab = PrefabList::build();
     for pair in prefab.into_inner() {
         match pair.as_rule() {
             Rule::id => our_prefab.key = pair.as_str().to_string(),
@@ -59,7 +59,7 @@ fn parse_initialized_prefab() {
     }
     assert_eq!(
         our_prefab,
-        Prefab::test_build(
+        PrefabList::test_build(
             "al",
             vec![
                 r#"/turf/icon/white/green/corner{tag = "icon-whitegreencorner (EAST)"; icon_state = "whitegreencorner"; dir = 4}"#,
@@ -82,7 +82,7 @@ fn parse_tgm_prefab() {
         .expect("Parsing failed")
         .next()
         .unwrap();
-    let mut our_prefab = Prefab::build();
+    let mut our_prefab = PrefabList::build();
     for pair in prefab.into_inner() {
         match pair.as_rule() {
             Rule::id => our_prefab.key = pair.as_str().to_string(),
@@ -93,7 +93,7 @@ fn parse_tgm_prefab() {
     }
     assert_eq!(
         our_prefab,
-        Prefab::test_build(
+        PrefabList::test_build(
             "aab",
             vec![
                 "/obj/structure/sign/warning/bomb_range{\n        name = \"\\improper MINING AREA - WATCH FOR BLASTING\"\n    }",

@@ -1,18 +1,56 @@
 use crate::parser::DMM::Rule;
+use auxtools::Value;
 use pest::iterators::Pair;
 use std::collections::{BTreeMap, HashMap};
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Prefab {
-    pub key: String,
-    pub path_initializers: Vec<String>,
+struct InitializeStatement {
+    pub key: Value,
+    pub value: Value,
 }
 
-impl Prefab {
+impl InitializeStatement {
+    /// This turns the string
+    /// > desc = "A station intercom. It looks like it has been modified to not broadcast."
+    /// into
+    /// ```
+    /// InitializeStatement {
+    ///    key: Value::from_string("desc"),
+    ///    value: Value::from_string("A station intercom. It looks like it has been modified to not broadcast.")
+    /// }
+    /// ```
+    ///
+    pub fn new(str: String) -> Self {
+        // This turns `desc = "A station intercom. It looks like it has been modified to not broadcast."` into
+        // ["desc", "\"A station intercom. It looks like it has been modified to not broadcast.\""]
+        let vec: Vec<&str> = str.splitn(2, '=').map(|x| x.trim()).collect();
+        Self {
+            key: parse_value(vec[0].to_owned()),
+            value: parse_value(vec[1].to_owned()),
+        }
+    }
+
+    /// This implements parsing a subset of DM to turn text into Value's
+    fn parse_value(str: String) -> Value {
+        todo!()
+    }
+}
+
+struct Prefab {
+    pub typepath: String,
+    pub initializers: Vec<InitializeStatement>,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct PrefabList {
+    pub key: String,
+    pub prefabs: Vec<String>,
+}
+
+impl PrefabList {
     pub fn build() -> Self {
         Self {
             key: String::new(),
-            path_initializers: vec![],
+            prefabs: vec![],
         }
     }
 
@@ -22,7 +60,7 @@ impl Prefab {
 
         array
             .into_inner()
-            .map(|prefab| Prefab::from_parser(prefab))
+            .map(|prefab| PrefabList::from_parser(prefab))
             .collect()
     }
 
@@ -40,7 +78,7 @@ impl Prefab {
 
         let mut new_self = Self {
             key: id.as_str().to_string(),
-            path_initializers: Vec::new(),
+            prefabs: Vec::new(),
         };
 
         new_self.take_paths(paths);
@@ -57,7 +95,7 @@ impl Prefab {
         for path in paths {
             #[cfg(test)]
             assert_eq!(path.as_rule(), Rule::path);
-            self.path_initializers.push(path.as_str().to_owned());
+            self.prefabs.push(path.as_str().to_owned());
         }
     }
 }

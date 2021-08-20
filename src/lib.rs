@@ -13,7 +13,7 @@ pub mod parser;
 pub use parser::{Coord as CoordMod, Prefab as PrefabMod, DMM as DMMMod};
 pub use CoordMod::Coord;
 pub use DMMMod::{DMMParser, Rule, DMM};
-pub use PrefabMod::Prefab;
+pub use PrefabMod::PrefabList;
 
 pub mod byond;
 

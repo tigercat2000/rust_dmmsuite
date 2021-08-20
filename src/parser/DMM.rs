@@ -8,14 +8,14 @@ const _GRAMMAR: &'static str = include_str!("DMM.pest");
 pub struct DMMParser;
 
 use crate::parser::Coord::Coord;
-use crate::parser::Prefab::Prefab;
+use crate::parser::Prefab::PrefabList;
 use std::collections::{BTreeMap, HashMap};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct DMM {
-    prefabs: HashMap<String, Prefab>,
+    prefabs: HashMap<String, PrefabList>,
     keysize: usize,
-    pub map: BTreeMap<Coord, *const Prefab>,
+    pub map: BTreeMap<Coord, *const PrefabList>,
 }
 
 impl DMM {
@@ -32,7 +32,7 @@ impl DMM {
         for section in sections {
             match section.as_rule() {
                 Rule::prefabs => {
-                    new_dmm.prefabs = Prefab::from_parser_array(section);
+                    new_dmm.prefabs = PrefabList::from_parser_array(section);
                     new_dmm.keysize = new_dmm.prefabs.iter().next().unwrap().1.key.len();
                 }
                 Rule::coordinates => {
@@ -92,7 +92,7 @@ impl DMM {
         });
     }
 
-    fn find_prefab(&self, key: &str) -> *const Prefab {
+    fn find_prefab(&self, key: &str) -> *const PrefabList {
         debug_assert_eq!(key.len(), self.keysize);
         self.prefabs.get(key).unwrap()
     }
